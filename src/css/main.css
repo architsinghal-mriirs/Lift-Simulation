@@ -59,6 +59,7 @@
     padding: 5px;
     background-color: yellow;
     height: 7em;
+    border: 2px solid black;
 }
 
 .box {
@@ -83,8 +84,8 @@
     height: 6.5em;
     width: 50px;
     background-color: aqua;
-    border: 5px solid black;
-    margin-left: 1em;
+    border: 5px solid red;
+    position: relative
 }
 
 /* .lift:hover {
@@ -105,4 +106,14 @@
     align-items: center;
     height: 100vh;
     width: 100vw;
+}
+
+.liftContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-right: 7em;
+    margin-left: 12em;
+    align-items: center;
+    margin-top: -7.5em;
 }
