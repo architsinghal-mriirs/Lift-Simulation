@@ -72,6 +72,7 @@
     width: 10rem;
     /* background-color: rebeccapurple; */
     justify-content: center;
+    
 }
 
 .upButton{
@@ -80,12 +81,52 @@
     width: 5rem;
 }
 
+.upBotton {
+    border: 2px solid black;
+    background-color: paleturquoise;
+    border-radius: 20em;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+
+}
+
+.upBotton:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
 .lift {
     height: 6.5em;
-    width: 50px;
+    width: 3em;
     background-color: aqua;
     border: 5px solid red;
-    position: relative
+    position: relative;
+    /* &:hover {
+        transform: translate(20px);
+    } */
+}
+
+.liftOverlay {
+    height: 6.5em;
+    width: 3em;
+    background-color: blue;
+    position: absolute;
+    /* &:hover {
+        transform: translateX(30px) scaleX(0);
+        transition: transform 2.5s ease-in-out;
+    } */
+}
+
+.openLift {
+    transform: translateX(1.5em) scaleX(0);
+    transition: transform 2.5s ease-in-out;
+}
+
+.closeLift {
+    transform: translateX(0);
+    transition: transform 2.5s ease-in-out;
 }
 
 /* .lift:hover {
