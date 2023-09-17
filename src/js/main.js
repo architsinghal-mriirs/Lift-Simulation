@@ -13,20 +13,20 @@ let liftsState = []
 generateButton.addEventListener('click', (event) => {
     event.preventDefault()
     // console.log('generateButton is pressed')
-    formContainer.style.visibility = 'hidden'
-    const newDiv = document.createElement("div");
-
-    // // Set attributes or content for the new div
-    // newDiv.textContent = "This is a new div added using JavaScript!";
-    // newDiv.style.backgroundColor = "lightblue";
-    // newDiv.style.padding = "10px";
-    formContainer.style.height = "0px"
-    formContainer.style.width = "0px"
-    mainContainer.appendChild(newDiv);
-    // console.log("lifts", numberOfLifts.value)
-    // console.log("floors", numberOfFloors.value)
-
-    renderFloorsAndLifts(numberOfFloors.value, numberOfLifts.value)
+    if(!numberOfFloors.value || !numberOfLifts.value) {
+        alert(`Please don't add empty values`)
+    } else if(numberOfFloors.value > 5 || numberOfLifts.value > 5 || numberOfFloors.value < numberOfLifts.value) {
+        alert(`Please adhere to the maximum limits. Number of floors cannot be higher than number of lifts`)
+    }else{
+        formContainer.style.visibility = 'hidden'
+        const newDiv = document.createElement("div");
+        formContainer.style.height = "0px"
+        formContainer.style.width = "0px"
+        mainContainer.appendChild(newDiv);
+    
+        renderFloorsAndLifts(numberOfFloors.value, numberOfLifts.value)
+    }
+    
 
     
 })
@@ -95,8 +95,14 @@ function initializeLiftState(numberOfLifts) {
     }
 }
 
-function getFreeLift() {
-    return liftsState?.find(lift => !lift?.isOccupied)
+function getFreeLift(targetFloorNumber) {
+    const freeLift = liftsState?.find(lift => lift.currentFloorNumber === targetFloorNumber)
+    if(!!freeLift) {
+        return freeLift
+    }else {
+        return liftsState?.find(lift => !lift?.isOccupied)
+    }
+    
 }
 
 function getLiftFromLiftNumber(liftNumber) {
@@ -136,7 +142,7 @@ async function handleLiftMovement() {
         console.log("Shift Called")
 
         // get Empty Lift Number. TODO: Modify this to get the nearest lift
-        const freeLift = getFreeLift()
+        const freeLift = getFreeLift(targetFloor)
 
         if(freeLift) {
             // get Empty Lift Element
