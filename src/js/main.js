@@ -6,6 +6,8 @@ const form = document.querySelector('.userInput')
 const numberOfLifts = document.getElementById('liftNumberInput')
 const numberOfFloors = document.getElementById('floorNumberInput')
 const building = document.querySelector('.building')
+const backButton = document.querySelector('.backButton')
+const newDiv = document.createElement("div");
 
 let floorsQueue = []
 let liftsState = []
@@ -13,15 +15,16 @@ let liftsState = []
 generateButton.addEventListener('click', (event) => {
     event.preventDefault()
     // console.log('generateButton is pressed')
-    if(!numberOfFloors.value || !numberOfLifts.value) {
-        alert(`Please don't add empty values`)
+    if(!numberOfFloors.value || !numberOfLifts.value || numberOfFloors.value < 0 || numberOfLifts.value < 0) {
+        alert(`Please don't add empty values or negative values`)
     } else if(numberOfFloors.value > 5 || numberOfLifts.value > 5 || numberOfFloors.value < numberOfLifts.value) {
         alert(`Please adhere to the maximum limits. Number of floors cannot be higher than number of lifts`)
     }else{
         formContainer.style.visibility = 'hidden'
-        const newDiv = document.createElement("div");
         formContainer.style.height = "0px"
         formContainer.style.width = "0px"
+        building.style.display = 'block'
+        backButton.style.display = 'none'
         mainContainer.appendChild(newDiv);
     
         renderFloorsAndLifts(numberOfFloors.value, numberOfLifts.value)
@@ -31,7 +34,28 @@ generateButton.addEventListener('click', (event) => {
     
 })
 
+backButton.addEventListener("click", () => {
+    liftsState = []
+    floorsQueue = []
+    building.style.display = 'none'
+    // document.getElementsByClassName('floor').remove()
+    while(document.querySelector('.floor')) {
+        document.querySelector('.floor').remove()
+
+    }
+    document.querySelector('.liftContainer').remove()
+    backButton.style.display = 'none'
+    building.innnerHTML = ''
+    numberOfLifts.value = ''
+    numberOfFloors.value = ''
+    formContainer.style.visibility = 'visible'
+    formContainer.style.height = "100vh"
+    formContainer.style.width = "100vw"
+    
+} )
+
 function renderFloorsAndLifts(numberOfFloors, numberOfLifts) {
+    backButton.style.display = 'block'
     for(let i=0; i<numberOfFloors; i++) {
         const floor = document.createElement("div")
         const liftRoom = document.createElement("div")
@@ -96,7 +120,7 @@ function initializeLiftState(numberOfLifts) {
 }
 
 function getFreeLift(targetFloorNumber) {
-    const freeLift = liftsState?.find(lift => lift.currentFloorNumber === targetFloorNumber)
+    const freeLift = liftsState?.find(lift => lift.currentFloorNumber === targetFloorNumber && !lift.isOccupied)
     if(!!freeLift) {
         return freeLift
     }else {
@@ -136,8 +160,6 @@ async function handleClick(event) {
 
 async function handleLiftMovement() {
     if(floorsQueue && floorsQueue.length > 0) {
-        // let queue = floorsQueue
-        //get the enqueued floor number
         const targetFloor = floorsQueue.shift()
         console.log("Shift Called")
 
@@ -150,18 +172,15 @@ async function handleLiftMovement() {
 
         //calculate the distance between the free lift's current floor and the targetFloor
         const distance = getTravelDistance(freeLift, targetFloor)
-
-        
-
-        //update lift state to be busy
-        updateLiftState(freeLift, targetFloor, isOccupied = true)
         const door = getLiftOverlay(freeLift?.liftNumber)
         
         if(distance === 0) {
+            //update lift state to be busy
+            updateLiftState(freeLift, targetFloor, isOccupied = true)
             await handleDoorOpening(door, freeLift, targetFloor)
         }else{
-//send the free lift to this floor
-        // setTimeout(moveLift(liftElement, distance), 2000 * distance)
+            //update lift state to be busy
+        updateLiftState(freeLift, targetFloor, isOccupied = true)
         moveLift(liftElement, distance, targetFloor)
         await setWaitingTime(2 * distance)
         await handleDoorOpening(door, freeLift, targetFloor)
